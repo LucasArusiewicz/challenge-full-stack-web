@@ -1,0 +1,39 @@
+version: "3.6"
+
+volumes:
+    postgres-challenge:
+    pgadmin:
+
+networks:
+    db_network:
+        driver: bridge
+
+services:
+    postgres_db:
+        image: postgres:13
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: challenge
+            POSTGRES_USER: challenge_user
+            POSTGRES_PASSWORD: challenge_pass
+        ports:
+            - "5432:5432"
+        networks:
+            - db_network
+        volumes:
+            - postgres-challenge:/data
+
+    pgadmin-compose:
+        image: dpage/pgadmin4
+        restart: unless-stopped
+        environment:
+            PGADMIN_DEFAULT_EMAIL: "test@gmail.com"
+            PGADMIN_DEFAULT_PASSWORD: "test123!"
+        ports:
+            - "16543:80"
+        depends_on:
+            - postgres_db
+        networks:
+            - db_network
+        volumes:
+            - pgadmin:/root/.pgadmin
